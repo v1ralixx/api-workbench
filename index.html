@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c1018">
+    <meta name="description" content="API Workbench — браузерный REST API-тестер с JSON, заголовками и предпросмотром ответа.">
+    <title>API Workbench — REST client</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="API Workbench на главную">
+        <span class="brand-icon" aria-hidden="true">⌘</span>
+        <span>api<span class="brand-accent">workbench</span></span>
+        <span class="brand-badge">REST CLIENT</span>
+      </a>
+      <div class="topbar-note"><span class="live-dot"></span> Запросы отправляются из твоего браузера</div>
+      <a class="github-link" href="https://github.com/new" target="_blank" rel="noreferrer">О проекте <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div>
+          <p class="eyebrow"><span>БЕЗ УСТАНОВКИ</span> ИНСТРУМЕНТ ДЛЯ API-РАЗРАБОТЧИКОВ</p>
+          <h1>Поговори со своим <span>API.</span></h1>
+          <p class="hero-subtitle">Собери запрос, отправь его и изучи ответ. Просто и без лишних окон.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <span class="art-orbit orbit-one"></span>
+          <span class="art-orbit orbit-two"></span>
+          <span class="art-symbol">{ }</span>
+          <span class="art-spark spark-one">✳</span>
+          <span class="art-spark spark-two">✦</span>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="REST API client">
+        <div class="request-card">
+          <div class="section-heading">
+            <div><span class="step-number">01</span><span>НОВЫЙ ЗАПРОС</span></div>
+            <button class="text-button" id="reset-button" type="button">Сбросить</button>
+          </div>
+
+          <div class="request-line">
+            <label class="sr-only" for="http-method">HTTP-метод</label>
+            <select id="http-method" class="method-select" aria-label="HTTP-метод">
+              <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option>
+            </select>
+            <label class="sr-only" for="request-url">Адрес запроса</label>
+            <input id="request-url" class="url-input" type="url" autocomplete="url" spellcheck="false" value="https://jsonplaceholder.typicode.com/posts/1" placeholder="https://api.example.com/v1/users">
+            <button class="send-button" id="send-button" type="button"><span aria-hidden="true">▶</span> <span id="send-label">Отправить</span></button>
+          </div>
+
+          <div class="example-row">
+            <span>ПОПРОБУЙ:</span>
+            <button class="example-chip" type="button" data-example="get">GET · JSONPlaceholder</button>
+            <button class="example-chip" type="button" data-example="post">POST · создать пост</button>
+            <span class="example-hint">Публичный тестовый API</span>
+          </div>
+
+          <div class="request-tabs" role="tablist" aria-label="Настройки запроса">
+            <button class="request-tab active" id="tab-params" type="button" role="tab" aria-selected="true" aria-controls="panel-params" data-panel="params">Параметры <span class="count-pill" id="params-count">0</span></button>
+            <button class="request-tab" id="tab-headers" type="button" role="tab" aria-selected="false" aria-controls="panel-headers" data-panel="headers">Заголовки <span class="count-pill" id="headers-count">0</span></button>
+            <button class="request-tab" id="tab-body" type="button" role="tab" aria-selected="false" aria-controls="panel-body" data-panel="body">Тело</button>
+            <button class="request-tab" id="tab-auth" type="button" role="tab" aria-selected="false" aria-controls="panel-auth" data-panel="auth">Авторизация</button>
+          </div>
+
+          <div class="tab-panel" id="panel-params" role="tabpanel" aria-labelledby="tab-params">
+            <p class="panel-description">Пары ключ и значение будут добавлены к URL перед отправкой запроса.</p>
+            <div class="key-value-head"><span>КЛЮЧ</span><span>ЗНАЧЕНИЕ</span><span></span></div>
+            <div id="params-list" class="key-value-list"></div>
+            <button class="add-row-button" type="button" data-add-row="params">＋ Добавить параметр</button>
+          </div>
+
+          <div class="tab-panel" id="panel-headers" role="tabpanel" aria-labelledby="tab-headers" hidden>
+            <p class="panel-description">Настрой заголовки запроса. Имена и значения передаются серверу API.</p>
+            <div class="key-value-head"><span>ИМЯ ЗАГОЛОВКА</span><span>ЗНАЧЕНИЕ</span><span></span></div>
+            <div id="headers-list" class="key-value-list"></div>
+            <button class="add-row-button" type="button" data-add-row="headers">＋ Добавить заголовок</button>
+          </div>
+
+          <div class="tab-panel body-panel" id="panel-body" role="tabpanel" aria-labelledby="tab-body" hidden>
+            <div class="body-toolbar"><p class="panel-description">JSON-тело отправляется для POST, PUT и PATCH.</p><button class="text-button" id="format-body" type="button">Форматировать JSON</button></div>
+            <label class="sr-only" for="request-body">JSON-тело запроса</label>
+            <textarea id="request-body" class="code-input" spellcheck="false" wrap="off" placeholder='{"title":"hello","body":"world"}'></textarea>
+          </div>
+
+          <div class="tab-panel auth-panel" id="panel-auth" role="tabpanel" aria-labelledby="tab-auth" hidden>
+            <div class="auth-row"><label for="auth-type">ТИП АВТОРИЗАЦИИ</label><select id="auth-type"><option value="none">Без авторизации</option><option value="bearer">Bearer Token</option></select></div>
+            <div class="auth-row" id="token-row" hidden><label for="auth-token">ТОКЕН</label><input id="auth-token" type="password" autocomplete="off" spellcheck="false" placeholder="Токен добавится как Authorization: Bearer …"></div>
+            <p class="privacy-note"><span aria-hidden="true">◈</span> Данные авторизации хранятся только в этой вкладке и не сохраняются.</p>
+          </div>
+        </div>
+
+        <section class="response-card" aria-label="Ответ сервера">
+          <div class="response-heading">
+            <div class="section-heading response-title"><div><span class="step-number">02</span><span>ОТВЕТ СЕРВЕРА</span></div></div>
+            <div class="response-tools"><span id="response-time" class="response-time"></span><button id="copy-response" class="copy-button" type="button" disabled>Скопировать</button></div>
+          </div>
+          <div class="response-meta" id="response-meta">
+            <span class="status-placeholder"><span class="status-dot"></span> Ожидание запроса</span>
+          </div>
+          <div class="response-tabs" role="tablist" aria-label="Представление ответа">
+            <button class="response-tab active" type="button" role="tab" aria-selected="true" data-response="body">Тело</button>
+            <button class="response-tab" type="button" role="tab" aria-selected="false" data-response="headers">Заголовки</button>
+          </div>
+          <div class="response-view">
+            <pre id="response-body" class="response-body" role="tabpanel" aria-live="polite"><span class="empty-response">Отправь запрос, и ответ появится здесь.</span></pre>
+            <pre id="response-headers" class="response-body" role="tabpanel" hidden></pre>
+          </div>
+        </section>
+      </section>
+
+      <aside class="cors-note">
+        <span class="info-icon" aria-hidden="true">i</span>
+        <p><strong>Подсказка:</strong> браузер разрешает запросы только к API, которые включили CORS для твоего сайта. Если видишь CORS-ошибку, проверь настройки сервера или используй адрес API, который разрешает запросы с твоего источника.</p>
+      </aside>
+      <footer class="footer"><span>API Workbench · REST client в браузере</span><span>Данные запроса не отправляются этому приложению <span class="footer-star">✳</span></span></footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
